@@ -7,7 +7,7 @@ const Layout = ({ children }) => {
   const { message } = useApp();
 
   return (
-    <div className="flex flex-col min-h-screen bg-slate-50/50">
+    <div className="flex flex-col min-h-screen bg-slate-50/50 dark:bg-slate-900 transition-colors duration-300">
       <TopNav />
       
       <main className="flex-1 flex flex-col max-w-7xl w-full mx-auto w-full">

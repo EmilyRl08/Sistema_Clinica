@@ -54,8 +54,8 @@ const Appointments = () => {
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h2 className="text-2xl font-bold text-slate-800">Consultas</h2>
-          <p className="text-slate-500">Agende e gerencie as consultas da clínica.</p>
+          <h2 className="text-2xl font-bold text-slate-800 dark:text-slate-100">Consultas</h2>
+          <p className="text-slate-500 dark:text-slate-400">Agende e gerencie as consultas da clínica.</p>
         </div>
         <button 
           onClick={() => handleOpenModal()}
@@ -67,12 +67,12 @@ const Appointments = () => {
       </div>
 
       <div className="card">
-        <div className="p-4 border-b border-slate-100 flex items-center gap-3">
+        <div className="p-4 border-b border-slate-100 dark:border-slate-700 flex items-center gap-3">
           <Search size={18} className="text-slate-400" />
           <input 
             type="text" 
             placeholder="Buscar por paciente ou médico..." 
-            className="flex-1 bg-transparent border-none focus:ring-0 text-sm"
+            className="flex-1 bg-transparent border-none focus:ring-0 text-sm text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
@@ -80,7 +80,7 @@ const Appointments = () => {
 
         <div className="overflow-x-auto">
           <table className="w-full text-left">
-            <thead className="bg-slate-50 text-slate-500 text-xs uppercase tracking-wider font-bold">
+            <thead className="bg-slate-50 dark:bg-slate-800/50 text-slate-500 dark:text-slate-400 text-xs uppercase tracking-wider font-bold">
               <tr>
                 <th className="px-6 py-4">Paciente</th>
                 <th className="px-6 py-4">Médico</th>
@@ -88,16 +88,16 @@ const Appointments = () => {
                 <th className="px-6 py-4 text-right">Ações</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100">
+            <tbody className="divide-y divide-slate-100 dark:divide-slate-700">
               {filteredApps.length > 0 ? (
                 filteredApps.map(app => {
                   const patient = patients.find(p => p.id === Number(app.patientId));
                   const doctor = doctors.find(d => d.id === Number(app.doctorId));
                   return (
-                    <tr key={app.id} className="hover:bg-slate-50/50 transition-colors">
-                      <td className="px-6 py-4 font-medium text-slate-700">{patient?.name}</td>
-                      <td className="px-6 py-4 text-slate-500">{doctor?.name}</td>
-                      <td className="px-6 py-4 text-slate-500">
+                    <tr key={app.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors">
+                      <td className="px-6 py-4 font-medium text-slate-700 dark:text-slate-200">{patient?.name}</td>
+                      <td className="px-6 py-4 text-slate-500 dark:text-slate-400">{doctor?.name}</td>
+                      <td className="px-6 py-4 text-slate-500 dark:text-slate-400">
                         <div className="flex flex-col">
                           <span className="font-bold">{app.date}</span>
                           <span className="text-xs">{app.time}</span>
@@ -106,13 +106,13 @@ const Appointments = () => {
                       <td className="px-6 py-4 text-right space-x-2">
                         <button 
                           onClick={() => handleOpenModal(app)}
-                          className="p-2 text-primary hover:bg-primary/10 rounded-lg transition-all"
+                          className="p-2 text-primary dark:text-accent hover:bg-primary/10 dark:hover:bg-accent/10 rounded-lg transition-all"
                         >
                           <Edit2 size={16} />
                         </button>
                         <button 
                           onClick={() => deleteAppointment(app.id)}
-                          className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-all"
+                          className="p-2 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-all"
                         >
                           <Trash2 size={16} />
                         </button>
@@ -122,7 +122,7 @@ const Appointments = () => {
                 })
               ) : (
                 <tr>
-                  <td colSpan="4" className="px-6 py-12 text-center text-slate-400">
+                  <td colSpan="4" className="px-6 py-12 text-center text-slate-400 dark:text-slate-500">
                     Nenhuma consulta encontrada.
                   </td>
                 </tr>
@@ -139,7 +139,7 @@ const Appointments = () => {
       >
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Paciente</label>
+            <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mb-1">Paciente</label>
             <select 
               required
               className="input-field"
@@ -153,7 +153,7 @@ const Appointments = () => {
             </select>
           </div>
           <div>
-            <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Médico</label>
+            <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mb-1">Médico</label>
             <select 
               required
               className="input-field"
@@ -168,7 +168,7 @@ const Appointments = () => {
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Data</label>
+              <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mb-1">Data</label>
               <input 
                 type="date"
                 required
@@ -178,7 +178,7 @@ const Appointments = () => {
               />
             </div>
             <div>
-              <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Hora</label>
+              <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mb-1">Hora</label>
               <input 
                 type="time"
                 required
@@ -189,7 +189,7 @@ const Appointments = () => {
             </div>
           </div>
           <div>
-            <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Observações</label>
+            <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mb-1">Observações</label>
             <textarea 
               className="input-field" 
               rows="3"
@@ -201,7 +201,7 @@ const Appointments = () => {
             <button 
               type="button"
               onClick={() => setIsModalOpen(false)}
-              className="flex-1 px-4 py-2 border border-slate-200 rounded-lg text-slate-600 font-medium hover:bg-slate-50"
+              className="flex-1 px-4 py-2 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-600 dark:text-slate-300 font-medium hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
             >
               Cancelar
             </button>
