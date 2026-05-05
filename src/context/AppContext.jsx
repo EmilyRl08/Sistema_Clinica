@@ -38,9 +38,7 @@ export const AppProvider = ({ children }) => {
   // CRUD Patients
   // ==========================================
   const addPatient = async (patient) => {
-    // Removemos ID e datas para o Supabase gerar sozinho
     const { id, created_at, ...cleanData } = patient;
-    
     const { data, error } = await supabase
       .from('patients')
       .insert([cleanData])
