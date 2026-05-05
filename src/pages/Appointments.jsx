@@ -15,8 +15,8 @@ const Appointments = () => {
   });
 
   const filteredApps = appointments.filter(app => {
-    const patient = patients.find(p => p.id === Number(app.patientId));
-    const doctor = doctors.find(d => d.id === Number(app.doctorId));
+    const patient = patients.find(p => String(p.id) === String(app.patientId));
+    const doctor = doctors.find(d => String(d.id) === String(app.doctorId));
     const search = searchTerm.toLowerCase();
     return (
       patient?.name.toLowerCase().includes(search) || 
@@ -39,8 +39,8 @@ const Appointments = () => {
     e.preventDefault();
     const data = {
       ...formData,
-      patientId: Number(formData.patientId),
-      doctorId: Number(formData.doctorId)
+      patientId: formData.patientId,
+      doctorId: formData.doctorId
     };
     if (editingApp) {
       updateAppointment({ ...data, id: editingApp.id });
@@ -91,8 +91,8 @@ const Appointments = () => {
             <tbody className="divide-y divide-slate-100 dark:divide-slate-700">
               {filteredApps.length > 0 ? (
                 filteredApps.map(app => {
-                  const patient = patients.find(p => p.id === Number(app.patientId));
-                  const doctor = doctors.find(d => d.id === Number(app.doctorId));
+                  const patient = patients.find(p => String(p.id) === String(app.patientId));
+                  const doctor = doctors.find(d => String(d.id) === String(app.doctorId));
                   return (
                     <tr key={app.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors">
                       <td className="px-6 py-4 font-medium text-slate-700 dark:text-slate-200">{patient?.name}</td>
