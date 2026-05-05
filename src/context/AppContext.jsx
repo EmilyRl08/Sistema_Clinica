@@ -1,4 +1,3 @@
-// src/context/AppContext.jsx
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import { supabase } from '../services/supabase';
 
@@ -15,153 +14,146 @@ export const AppProvider = ({ children }) => {
     setTimeout(() => setMessage(null), 3000);
   };
 
-  const fetchPatients = async () => {
-    const { data, error } = await supabase.from('patients').select('*');
-    if (error) console.error(error);
-    else setPatients(data);
-  };
+  useEffect(() => {
+    fetchData();
+  }, []);
 
-  const fetchDoctors = async () => {
-    const { data, error } = await supabase.from('doctors').select('*');
-    if (error) console.error(error);
-    else setDoctors(data);
-  };
+  const fetchData = async () => {
+    try {
+      const [patientsData, doctorsData, appointmentsData] = await Promise.all([
+        supabase.from('patients').select('*').order('id', { ascending: true }),
+        supabase.from('doctors').select('*').order('id', { ascending: true }),
+        supabase.from('appointments').select('*').order('id', { ascending: true })
+      ]);
 
-  const fetchAppointments = async () => {
-    const { data, error } = await supabase.from('appointments').select('*');
-    if (error) console.error(error);
-    else {
-      const mappedData = data.map(app => ({
-        ...app,
-        patientId: app.patient_id,
-        doctorId: app.doctor_id
-      }));
-      setAppointments(mappedData);
+      if (patientsData.data) setPatients(patientsData.data);
+      if (doctorsData.data) setDoctors(doctorsData.data);
+      if (appointmentsData.data) setAppointments(appointmentsData.data);
+    } catch (error) {
+      console.error("Erro ao carregar dados:", error);
     }
   };
 
-  useEffect(() => {
-    fetchPatients();
-    fetchDoctors();
-    fetchAppointments();
-  }, []);
-
+  // ==========================================
   // CRUD Patients
+  // ==========================================
   const addPatient = async (patient) => {
-    const { error } = await supabase.from('patients').insert([patient]);
-    if (error) {
-      console.error(error);
-      showFeedback('Erro ao cadastrar paciente.');
-    } else {
+    const { id, created_at, ...cleanData } = patient;
+    const { data, error } = await supabase
+      .from('patients')
+      .insert([cleanData])
+      .select();
+
+    if (!error && data) {
+      setPatients(prev => [...prev, data[0]]);
       showFeedback('Paciente cadastrado com sucesso!');
-      fetchPatients();
+    } else {
+      showFeedback('Erro ao cadastrar paciente.');
+      console.error("Erro Supabase (Patients):", error);
     }
   };
 
   const updatePatient = async (updatedPatient) => {
-    const { id, ...updateData } = updatedPatient;
-    const { error } = await supabase.from('patients').update(updateData).eq('id', id);
-    if (error) {
-      console.error(error);
-      showFeedback('Erro ao atualizar paciente.');
-    } else {
+    const { id, created_at, ...rest } = updatedPatient;
+    const { data, error } = await supabase
+      .from('patients')
+      .update(rest)
+      .eq('id', id)
+      .select();
+
+    if (!error && data) {
+      setPatients(prev => prev.map(p => p.id === id ? data[0] : p));
       showFeedback('Paciente atualizado com sucesso!');
-      fetchPatients();
+    } else {
+      showFeedback('Erro ao atualizar paciente.');
+      console.error(error);
     }
   };
 
   const deletePatient = async (id) => {
     const { error } = await supabase.from('patients').delete().eq('id', id);
-    if (error) {
-      console.error(error);
-      showFeedback('Erro ao excluir paciente.');
-    } else {
+    if (!error) {
+      setPatients(prev => prev.filter(p => p.id !== id));
       showFeedback('Paciente excluído com sucesso!');
-      fetchPatients();
+    } else {
+      showFeedback('Erro ao excluir paciente.');
+      console.error(error);
     }
   };
 
+  // ==========================================
   // CRUD Doctors
+  // ==========================================
   const addDoctor = async (doctor) => {
-    const { error } = await supabase.from('doctors').insert([doctor]);
-    if (error) {
-      console.error(error);
-      showFeedback('Erro ao cadastrar médico.');
-    } else {
+    const { id, created_at, ...cleanData } = doctor;
+    const { data, error } = await supabase.from('doctors').insert([cleanData]).select();
+    if (!error && data) {
+      setDoctors(prev => [...prev, data[0]]);
       showFeedback('Médico cadastrado com sucesso!');
-      fetchDoctors();
+    } else {
+      showFeedback('Erro ao cadastrar médico.');
+      console.error(error);
     }
   };
 
   const updateDoctor = async (updatedDoctor) => {
-    const { id, ...updateData } = updatedDoctor;
-    const { error } = await supabase.from('doctors').update(updateData).eq('id', id);
-    if (error) {
-      console.error(error);
-      showFeedback('Erro ao atualizar médico.');
-    } else {
+    const { id, created_at, ...rest } = updatedDoctor;
+    const { data, error } = await supabase.from('doctors').update(rest).eq('id', id).select();
+    if (!error && data) {
+      setDoctors(prev => prev.map(d => d.id === id ? data[0] : d));
       showFeedback('Médico atualizado com sucesso!');
-      fetchDoctors();
+    } else {
+      showFeedback('Erro ao atualizar médico.');
+      console.error(error);
     }
   };
 
   const deleteDoctor = async (id) => {
     const { error } = await supabase.from('doctors').delete().eq('id', id);
-    if (error) {
-      console.error(error);
-      showFeedback('Erro ao excluir médico.');
-    } else {
+    if (!error) {
+      setDoctors(prev => prev.filter(d => d.id !== id));
       showFeedback('Médico excluído com sucesso!');
-      fetchDoctors();
+    } else {
+      showFeedback('Erro ao excluir médico.');
+      console.error(error);
     }
   };
 
+  // ==========================================
   // CRUD Appointments
+  // ==========================================
   const addAppointment = async (appointment) => {
-    const dbAppointment = {
-      patient_id: appointment.patientId,
-      doctor_id: appointment.doctorId,
-      date: appointment.date,
-      time: appointment.time,
-      observations: appointment.observations
-    };
-    const { error } = await supabase.from('appointments').insert([dbAppointment]);
-    if (error) {
-      console.error(error);
-      showFeedback('Erro ao agendar consulta.');
-    } else {
+    const { id, created_at, ...cleanData } = appointment;
+    const { data, error } = await supabase.from('appointments').insert([cleanData]).select();
+    if (!error && data) {
+      setAppointments(prev => [...prev, data[0]]);
       showFeedback('Consulta agendada com sucesso!');
-      fetchAppointments();
+    } else {
+      showFeedback('Erro ao agendar consulta.');
+      console.error(error);
     }
   };
 
   const updateAppointment = async (updatedAppointment) => {
-    const { id, ...updateData } = updatedAppointment;
-    const dbAppointment = {
-      patient_id: updateData.patientId,
-      doctor_id: updateData.doctorId,
-      date: updateData.date,
-      time: updateData.time,
-      observations: updateData.observations
-    };
-    const { error } = await supabase.from('appointments').update(dbAppointment).eq('id', id);
-    if (error) {
-      console.error(error);
-      showFeedback('Erro ao atualizar consulta.');
-    } else {
+    const { id, created_at, ...rest } = updatedAppointment;
+    const { data, error } = await supabase.from('appointments').update(rest).eq('id', id).select();
+    if (!error && data) {
+      setAppointments(prev => prev.map(a => a.id === id ? data[0] : a));
       showFeedback('Consulta atualizada com sucesso!');
-      fetchAppointments();
+    } else {
+      showFeedback('Erro ao atualizar consulta.');
+      console.error(error);
     }
   };
 
   const deleteAppointment = async (id) => {
     const { error } = await supabase.from('appointments').delete().eq('id', id);
-    if (error) {
-      console.error(error);
-      showFeedback('Erro ao cancelar consulta.');
-    } else {
+    if (!error) {
+      setAppointments(prev => prev.filter(a => a.id !== id));
       showFeedback('Consulta cancelada com sucesso!');
-      fetchAppointments();
+    } else {
+      showFeedback('Erro ao cancelar consulta.');
+      console.error(error);
     }
   };
 
