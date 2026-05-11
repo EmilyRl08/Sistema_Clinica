@@ -29,6 +29,22 @@ Para a sua apresentação, aqui estão os destaques do que o sistema já faz:
 
 ---
 
+## ⚛️ React.js: A Tecnologia Principal
+
+O **React.js** é a peça central deste projeto. Criado pelo Facebook, ele não é apenas uma "linguagem", mas uma biblioteca poderosa que dita como o sistema se comporta.
+
+### Por que usar React?
+1.  **Componentização:** Imagine o site como blocos de LEGO. Criamos o "botão" uma vez e o usamos em 10 lugares diferentes. Se precisarmos mudar a cor, mudamos em um único arquivo e todos se atualizam.
+2.  **Virtual DOM (Performance):** O React é inteligente. Ele não atualiza a página toda quando você clica em algo; ele atualiza apenas o pequeno pedaço que mudou. Isso deixa o sistema extremamente rápido.
+3.  **SPA (Single Page Application):** O usuário navega entre as abas (Pacientes, Médicos) sem que o navegador precise carregar uma nova página. Tudo acontece dentro de uma "página única".
+
+### Como o React roda neste projeto?
+Para que o código React "ganhe vida", ele passa por um processo chamado **Build/Serve** através do Vite:
+*   O comando `npm install` baixa o motor do React para a pasta `node_modules`.
+*   O comando `npm run dev` inicia o servidor que interpreta os arquivos `.jsx` (React) e os transforma em código que o navegador entende.
+
+---
+
 ## 2️⃣ Pré-requisitos (O que instalar)
 
 Antes de começar, você precisa preparar seu computador com as ferramentas abaixo:
